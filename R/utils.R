@@ -214,7 +214,6 @@ format_pred_comb <- function(ind_est, param, label, fixed){
 }
 
 
-## Function to format results of Bayesian analysis
 formatBayesian <- function(mortalityData, res, data, label, fixed = FALSE){
   
   #Parameter table
@@ -229,17 +228,18 @@ formatBayesian <- function(mortalityData, res, data, label, fixed = FALSE){
     group_by(study_sev) %>%
     summarize(first_author = first(first_author),
               sanatorium = first(sanatorium),
+              location = first(location),
+              time_period = first(time_period),
               severity = first(severity),
               start_type = first(start_type),
-              category = first(category),
               .groups = "drop")
   
   #Study-level raw results
   ind_est <- format_ind_est(covar, res, data, fixed)
-
+  
   #Study-level survival curves
   ind_surv <- format_ind_surv(ind_est, covar, param, label)
-
+  
   #Study-level predictions (median survival and survival probabilities)
   pred_comb <- format_pred_comb(ind_est, param, label, fixed)
   

@@ -2,10 +2,10 @@
 #Boston University
 #Pre-chemotherapy TB Analysis
 
-##########################################################################################
-# This program performs the mortality Bayesian meta-analysis for the US pre-1930s studies
-# It takes about 6 minutes to run
-##########################################################################################
+###########################################################################################
+# This program performs the mortality Bayesian meta-analysis for the US post-1930s studies
+# It takes about 15 to run
+###########################################################################################
 
 options(scipen=999)
 options(digits = 10)
@@ -48,22 +48,22 @@ n.thin <- 30
 #### US Studies: Complete Model ####
 
 #Subsetting and formatting data
-mortality_comp_pre <- mortality %>%
-  filter(study_id %in% c("63", "67", "90_1016")) %>%
+mortality_comp <- mortality %>%
+  filter(study_id %in% c("1029", "93", "45")) %>%
   mutate(study_sev_num = as.numeric(factor(study_sev)),
          study_id_num = as.numeric(factor(study_id)))
 
 #Running model
-output_comp_pre <- run_comp(mortality_comp_pre,
-                            n.iter = n.iter, n.burnin = n.burnin, n.thin = n.thin)
+output_comp <- run_comp(mortality_comp, 
+                        n.iter = n.iter, n.burnin = n.burnin, n.thin = n.thin)
 
 
 
 #### US Studies: Stratified Model ####
 
 #Subsetting and formatting data
-mortality_sev_pre <- mortality %>%
-  filter(study_id %in% c("63", "67", "90_1016"),
+mortality_sev <- mortality %>%
+  filter(study_id %in% c("1029", "93", "45"),
          severity != "Unknown") %>%
   mutate(study_sev_num = as.numeric(factor(study_sev)),
          study_id_num = as.numeric(factor(study_id)),
@@ -72,23 +72,22 @@ mortality_sev_pre <- mortality %>%
          sev_unk = as.numeric(severity == "Unknown"))
 
 #Running model
-output_sev_pre <- run_sev(mortality_sev_pre,
-                          n.iter = n.iter, n.burnin = n.burnin, n.thin = n.thin)
-
+output_sev <- run_sev(mortality_sev,
+                      n.iter = n.iter, n.burnin = n.burnin, n.thin = n.thin)
 
 
 
 
 #### Saving Results------------------------------------------------------------------------------
 
-data_comp_pre <- getData(mortality_comp_pre)
-data_sev_pre <- getData(mortality_sev_pre)
-res_comp_pre <- output_comp_pre$res
-res_sev_pre <- output_sev_pre$res
-eval_comp_pre <- output_comp_pre$eval
-eval_sev_pre <- output_sev_pre$eval
+data_comp <- getData(mortality_comp)
+data_sev <- getData(mortality_sev)
+res_comp <- output_comp$res
+res_sev <- output_sev$res
+eval_comp <- output_comp$eval
+eval_sev <- output_sev$eval
 
-save(res_comp_pre, res_sev_pre, eval_comp_pre, eval_sev_pre, data_comp_pre, data_sev_pre,
-     file = "R/bayesian_pre.RData")
+save(res_comp, res_sev, eval_comp, eval_sev, data_comp, data_sev,
+     file = "R/bayesian_severity.RData")
 
 
