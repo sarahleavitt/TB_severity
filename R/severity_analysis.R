@@ -76,8 +76,6 @@ output_sev <- run_sev(mortality_sev,
                       n.iter = n.iter, n.burnin = n.burnin, n.thin = n.thin)
 
 
-
-
 #### Saving Results------------------------------------------------------------------------------
 
 data_comp <- getData(mortality_comp)

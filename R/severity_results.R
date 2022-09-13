@@ -22,13 +22,14 @@ mortality <- read.csv("data/mortality_data.csv")
 load('R/bayesian_severity.RData')
 
 
-#### Formatting results ----------------------------------------------------------------------------
+#### Formatting results --------------------------------------------------------
 
 form_comp <- formatBayesian(mortality, res_comp, data_comp, "Combined")
-form_sev <- formatBayesian(mortality, res_sev, data_sev, "Severity", fixed = TRUE)
+form_sev <- formatBayesian(mortality, res_sev, data_sev, "Severity",
+                           fixed = TRUE)
 
 
-#### Diagnostic Plots ------------------------------------------------------------------------------
+#### Diagnostic Plots ----------------------------------------------------------
 
 png("Figures/xyplot_comp.png")
 xyplot(eval_comp)
@@ -45,7 +46,7 @@ autocorr.plot(eval_sev)
 dev.off()
 
 
-#### Table of Main Results -------------------------------------------------------------------------
+#### Table of Main Results -----------------------------------------------------
 
 #Combining raw tables from results lists
 raw_tab <- bind_rows(form_comp$param, form_sev$param)
@@ -104,20 +105,18 @@ dist_tab <- raw_tab %>%
 data_comp2 <- as.data.frame(t(data_comp[[2]]))
 data_comp2$Severity <- "Combined"
 
-counts_comp <- data_comp2
-
 #Counts stratified by severity for US post-1930s subset
 mortality_sub <- mortality %>% filter(severity != "Unknown",
                                       study_id %in% c("1029", "93", "45"))
-
 counts <- mortality_sub %>%
   group_by(severity) %>%
   summarize(nStudies = length(unique(study_id)),
             nCohorts = length(unique(cohort_id)),
             nIndividuals = n(),
             .groups = "drop") %>%
-  mutate(Severity = paste0(severity, ""))
-
+  mutate(Severity = paste0(severity, "")) %>%
+  bind_rows(data_comp2) %>%
+  select(-severity, -nSeverity)
 
 #Combining the tables
 final_tab <- dist_tab %>%
@@ -127,10 +126,81 @@ final_tab <- dist_tab %>%
   full_join(med_tab, by = c("Severity")) %>%
   full_join(counts, by = c("Severity"))
 
-
 #Variance of frailty terms
 theta <- raw_tab %>%
   filter(value == "theta") %>%
   mutate(theta = round(est, 2)) %>%
   select(label, theta)
+
+
+#### Summary Survival Curves ---------------------------------------------------
+
+ggplot(form_comp$surv_dens) +
+  geom_line(aes(x = x, y = surv),
+            color = "black", size = 1, linetype = "solid") +
+  geom_smooth(aes(x = x, y = surv_est, ymin = cilb, ymax = ciub),
+              stat = "identity", linetype = 0, alpha = 0.25, na.rm = TRUE) +
+  scale_y_continuous(name = "Survival, 1 - F(t)", limits = c(0, 1)) +
+  scale_x_continuous(name = "Years", limits = c(0, 30)) +
+  theme_bw()
+
+ggsave("Figures/summary_curves_comp.png", width = 5, height = 4.5)
+
+ggplot(form_sev$surv_dens) +
+  geom_line(aes(x = x, y = surv, color = severity),
+            size = 1, linetype = "solid") +
+  geom_smooth(aes(x = x, y = surv_est, ymin = cilb, ymax = ciub,
+                  fill = severity),
+              stat = "identity", linetype = 0, alpha = 0.15, na.rm = TRUE) +
+  scale_y_continuous(name = "Survival, 1 - F(t)", limits = c(0, 1)) +
+  scale_x_continuous(name = "Years", limits = c(0, 30)) +
+  theme_bw() +
+  theme(legend.position = "bottom") +
+  scale_color_manual("", values = c("Minimal" = "seagreen",
+                                    "Moderately advanced" = "goldenrod1",
+                                    "Far advanced" = "firebrick2")) +
+  scale_fill_manual("",
+                    values = c("Minimal" = "seagreen",
+                               "Moderately advanced" = "goldenrod1",
+                               "Far advanced" = "firebrick2"))
+
+ggsave("Figures/summary_curves_sev.png", width = 5, height = 4.5)
+
+
+
+#### Individual Survival Curves ------------------------------------------------
+
+#Survival curves for complete model
+p1 <- ggplot(form_comp$ind_surv) +
+  geom_line(aes(x = x, y = surv, group = study_sev, color = severity),
+            size = 0.7, alpha = 0.3) +
+  geom_line(data = form_comp$surv_dens, aes(x = x, y = surv),
+            color = "black", size = 1, linetype = "longdash") +
+  scale_y_continuous(name = "Survival, 1 - F(t)", limits = c(0, 1)) +
+  scale_x_continuous(name = "Years", limits = c(0, 30)) +
+  theme_bw() +
+  theme(legend.position = "none") +
+  scale_color_manual("Disease Severity",
+                     values = c("Minimal" = "seagreen", 
+                                "Moderately advanced" = "goldenrod1",
+                                "Far advanced" = "firebrick2"))
+
+#Survival curves for stratified model
+p2 <- ggplot(form_sev$ind_surv) +
+  geom_line(aes(x = x, y = surv, group = study_sev, color = severity),
+            size = 0.7, alpha = 0.3) +
+  geom_line(data = form_sev$surv_dens,
+            aes(x = x, y = surv, color = severity),
+            linetype = "longdash", size = 1) +
+  scale_y_continuous(name = "Survival, 1 - F(t)", limits = c(0, 1)) +
+  scale_x_continuous(name = "Years", limits = c(0, 30)) +
+  theme_bw() +
+  theme(legend.position = "bottom") +
+  scale_color_manual("", drop = FALSE,
+                     values = c("Minimal" = "seagreen",
+                                "Moderately advanced" = "goldenrod1",
+                                "Far advanced" = "firebrick2"))
+
+p_comb <- arrangeGrob(p1, p2, nrow = 2)
+ggsave("Figures/individual_curves.png", p_comb, width = 5.5, height = 8)
 
