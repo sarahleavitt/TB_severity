@@ -164,7 +164,7 @@ ggplot(form_sev$surv_dens) +
                                "Moderately advanced" = "goldenrod1",
                                "Far advanced" = "firebrick2"))
 
-ggsave("Figures/summary_curves_sev.png", width = 5, height = 4.5)
+ggsave("Figures/summary_curves_sev.png", width = 5, height = 5)
 
 
 
@@ -204,3 +204,41 @@ p2 <- ggplot(form_sev$ind_surv) +
 p_comb <- arrangeGrob(p1, p2, nrow = 2)
 ggsave("Figures/individual_curves.png", p_comb, width = 5.5, height = 8)
 
+
+
+##### Forest plots -------------------------------------------------------------
+
+#TB survival for full model
+ggplot(form_comp$pred_comb %>% filter(value != "median"),
+       aes(x = est, y = first_author, xmin = cilb, xmax = ciub,
+           shape = shape)) +
+  facet_grid(severity ~ pred_label, scales = "free", space = "free") +
+  geom_point() +
+  geom_point(data = form_comp$pred_comb %>% filter(shape == "Overall" & value != "median"),
+             color = 'black', shape = 18, size = 3) +
+  geom_errorbar(width = 0.3) +
+  scale_x_continuous(name = "1-Year Survival Probability", limits = c(0, 1),
+                     breaks = c(0, 0.5, 1)) +
+  theme_bw() +
+  theme(axis.title.y = element_blank(),
+        legend.position = "bottom") +
+  scale_shape_discrete(guide = "none")
+
+ggsave("Figures/forest_full.png", width = 7, height = 5)
+
+#TB survival for stratified model
+ggplot(form_sev$pred_comb %>% filter(value != "median"),
+       aes(x = est, y = first_author, xmin = cilb, xmax = ciub, shape = shape)) +
+  geom_point() +
+  geom_point(data = form_sev$pred_comb %>% filter(shape == "Overall" & value != "median"),
+             color = 'black', shape = 18, size = 3) +
+  geom_errorbar(width = 0.3) +
+  scale_x_continuous(name = "1-Year Survival Probability", limits = c(0, 1),
+                     breaks = c(0, 0.5, 1)) +
+  facet_grid(severity ~ pred_label, scales = "free", space = "free") +
+  theme_bw() +
+  theme(axis.title.y = element_blank(),
+        legend.position = "bottom") +
+  scale_shape_discrete(guide = "none")
+
+ggsave("Figures/forest_stratified.png", width = 7, height = 5)
