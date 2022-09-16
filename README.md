@@ -12,21 +12,13 @@ studies stratified by disease severity.
 
 This is the individual-level self-cure data for studies used in CITE PAPER 1
 
-### cure_data_all.csv
-
-LAURA REMOVE OR DESCRIBE
-
-### cureDataSummary.csv
-
-LAURA REMOVE OR DESCRIBE (if keeping, change name to cure_data_summary.csv to be consistent)
-
 ### mortality_data.csv
 
 This is the individual-level mortality data used in CITE PAPER 1
 
-### NaturalRecovaryData.csv
+### pre_chemo_data.csv
 
-LAURA REMOVE OR DESCRIBE (if keeping, change name to natural_recovery_data.csv to be consistent)
+This is a dataset with a large collection of data from the prechemotherapy era. This is used to plot the natural recovery data.
 
 ### study_id.csv
 
@@ -53,19 +45,7 @@ a fixed effect for disease severity.
 
 ### plot_all_cure_data.R
 
-LAURA REMOVE OR DESCRIBE
-
-### plotAllCureData.html
-
-LAURA REMOVE OR DESCRIBE (if keeping, change name to plot_all_cure_data.html for consistency).
-
-### plotAllCureData.Rmd
-
-LAURA REMOVE OR DESCRIBE (if keeping, change name to plot_all_cure_data.Rmd for consistency).
-
-### Ragonnet calculations.R
-
-LAURA REMOVE OR DESCRIBE (if keeping, change name to ragonnet_calculations.R for consitency)
+This plots all of the natural recovery data.
 
 ### severity_analysis.R
 
