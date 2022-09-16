@@ -1,6 +1,6 @@
 #Sarah V. Leavitt
 #Boston University
-#Pre-chemotherapy TB Analysis
+#Pre-chemotherapy TB Severity Analysis
 
 ###########################################################################################
 # This program performs the mortality Bayesian meta-analysis for the US post-1930s studies
