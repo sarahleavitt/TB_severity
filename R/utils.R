@@ -15,6 +15,16 @@ reload_source <- function(){
 }
 
 
+## Function to read all sheets from an excel file
+read_excel_allsheets <- function(filename, tibble = TRUE) {
+  sheets <- readxl::excel_sheets(filename)
+  x <- lapply(sheets, function(X) readxl::read_excel(filename, sheet = X))
+  if(!tibble) x <- lapply(x, as.data.frame)
+  names(x) <- sheets
+  x
+}
+
+
 ## Function to format the parameter table from the Bayesian analysis
 format_param <- function(res, label, fixed){
   

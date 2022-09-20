@@ -5,7 +5,7 @@
 ##############################################################################
 # This program plots to overall cure data that is not stratified by severity
 ##############################################################################
-setwd("G:/My Drive/Work/TB Projects/Duration Research/pre_chemo_tb")
+#setwd("G:/My Drive/Work/TB Projects/Duration Research/pre_chemo_tb")
 
 options(scipen=999)
 options(digits = 10)
@@ -36,8 +36,12 @@ cureData2 <- as.data.frame(inner_join(cureData1,studyid,by="study_id"))
 cureData2$cureRate <- cureData2$c2/cureData2$n
 
 # basic plot of cure rate by year, author and severity; 
-ggplot(cureData2[cureData2$severity!="None",],aes(x=interval_r,y=cureRate,group=cohort_id,color=severity))+
+ggplot(cureData2[cureData2$severity != "None",],
+       aes(x=interval_r, y=cureRate, group=cohort_id, color=severity))+
   geom_point(aes(shape=first_author))+geom_line()+xlim(0,10)+
-  labs(x="Year since diagnosis",y="Probability of Natural Recovery",color="Severity")
+  labs(x="Year since diagnosis",
+       y="Probability of Natural Recovery",
+       color="Severity")
+ggsave("Figures/cure_curves.png", width = 7, height = 4)
 
   
