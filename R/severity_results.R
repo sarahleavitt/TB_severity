@@ -105,9 +105,13 @@ dist_tab <- raw_tab %>%
 data_comp2 <- as.data.frame(t(data_comp[[2]]))
 data_comp2$Severity <- "Combined"
 
-#Counts stratified by severity for US post-1930s subset
-mortality_sub <- mortality %>% filter(severity != "Unknown",
+#Counts stratified by severity for baseline sample size
+mortality_sub1 <- mortality %>% filter(severity != "Unknown",
                                       study_id %in% c("1029", "93", "45"))
+
+#Counts stratified by severity for modeling sample size
+mortality_sub <- mortality_sub1 %>% filter(no_survival == FALSE)
+
 counts <- mortality_sub %>%
   group_by(severity) %>%
   summarize(nStudies = length(unique(study_id)),
