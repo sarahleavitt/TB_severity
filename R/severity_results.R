@@ -145,7 +145,7 @@ ggplot(form_comp$surv_dens) +
   geom_smooth(aes(x = x, y = surv_est, ymin = cilb, ymax = ciub),
               stat = "identity", linetype = 0, alpha = 0.25, na.rm = TRUE) +
   scale_y_continuous(name = "Survival, 1 - F(t)", limits = c(0, 1)) +
-  scale_x_continuous(name = "Years", limits = c(0, 30)) +
+  scale_x_continuous(name = "Years since presentation", limits = c(0, 30)) +
   theme_bw()
 
 ggsave("Figures/summary_curves_comp.png", width = 5, height = 4.5)
@@ -157,7 +157,7 @@ ggplot(form_sev$surv_dens) +
                   fill = severity),
               stat = "identity", linetype = 0, alpha = 0.15, na.rm = TRUE) +
   scale_y_continuous(name = "Survival, 1 - F(t)", limits = c(0, 1)) +
-  scale_x_continuous(name = "Years", limits = c(0, 30)) +
+  scale_x_continuous(name = "Years since presentation", limits = c(0, 30)) +
   theme_bw() +
   theme(legend.position = "bottom") +
   scale_color_manual("", values = c("Minimal" = "seagreen",
@@ -181,7 +181,7 @@ p1 <- ggplot(form_comp$ind_surv) +
   geom_line(data = form_comp$surv_dens, aes(x = x, y = surv),
             color = "black", size = 1, linetype = "longdash") +
   scale_y_continuous(name = "Survival, 1 - F(t)", limits = c(0, 1)) +
-  scale_x_continuous(name = "Years", limits = c(0, 30)) +
+  scale_x_continuous(name = "Years since presentation", limits = c(0, 30)) +
   theme_bw() +
   theme(legend.position = "none") +
   scale_color_manual("Disease Severity",
@@ -197,7 +197,7 @@ p2 <- ggplot(form_sev$ind_surv) +
             aes(x = x, y = surv, color = severity),
             linetype = "longdash", size = 1) +
   scale_y_continuous(name = "Survival, 1 - F(t)", limits = c(0, 1)) +
-  scale_x_continuous(name = "Years", limits = c(0, 30)) +
+  scale_x_continuous(name = "Years since presentation", limits = c(0, 30)) +
   theme_bw() +
   theme(legend.position = "bottom") +
   scale_color_manual("", drop = FALSE,
