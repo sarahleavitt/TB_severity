@@ -144,11 +144,23 @@ ggplot(form_comp$surv_dens) +
             color = "black", size = 1, linetype = "solid") +
   geom_smooth(aes(x = x, y = surv_est, ymin = cilb, ymax = ciub),
               stat = "identity", linetype = 0, alpha = 0.25, na.rm = TRUE) +
-  scale_y_continuous(name = "Survival, 1 - F(t)", limits = c(0, 1)) +
+  scale_y_continuous(name = "Survival", limits = c(0, 1)) +
   scale_x_continuous(name = "Years since presentation", limits = c(0, 30)) +
   theme_bw()
 
 ggsave("Figures/summary_curves_comp.png", width = 5, height = 4.5)
+
+# modify to have x axis limited to (0,10) instead of (0,30)
+ggplot(form_comp$surv_dens) +
+  geom_line(aes(x = x, y = surv),
+            color = "black", size = 1, linetype = "solid") +
+  geom_smooth(aes(x = x, y = surv_est, ymin = cilb, ymax = ciub),
+              stat = "identity", linetype = 0, alpha = 0.25, na.rm = TRUE) +
+  scale_y_continuous(name = "Survival", limits = c(0, 1)) +
+  scale_x_continuous(name = "Years since presentation", limits = c(0, 10)) +
+  theme_bw()
+
+ggsave("Figures/summary_curves_comp_2.png", width = 5, height = 4.5)
 
 ggplot(form_sev$surv_dens) +
   geom_line(aes(x = x, y = surv, color = severity),
@@ -156,7 +168,7 @@ ggplot(form_sev$surv_dens) +
   geom_smooth(aes(x = x, y = surv_est, ymin = cilb, ymax = ciub,
                   fill = severity),
               stat = "identity", linetype = 0, alpha = 0.15, na.rm = TRUE) +
-  scale_y_continuous(name = "Survival, 1 - F(t)", limits = c(0, 1)) +
+  scale_y_continuous(name = "Survival", limits = c(0, 1)) +
   scale_x_continuous(name = "Years since presentation", limits = c(0, 30)) +
   theme_bw() +
   theme(legend.position = "bottom") +
@@ -170,7 +182,26 @@ ggplot(form_sev$surv_dens) +
 
 ggsave("Figures/summary_curves_sev.png", width = 5, height = 5)
 
+# limit years to (0,10) insteand of (0,30)
+ggplot(form_sev$surv_dens) +
+  geom_line(aes(x = x, y = surv, color = severity),
+            size = 1, linetype = "solid") +
+  geom_smooth(aes(x = x, y = surv_est, ymin = cilb, ymax = ciub,
+                  fill = severity),
+              stat = "identity", linetype = 0, alpha = 0.15, na.rm = TRUE) +
+  scale_y_continuous(name = "Survival", limits = c(0, 1)) +
+  scale_x_continuous(name = "Years since presentation", limits = c(0, 10)) +
+  theme_bw() +
+  theme(legend.position = "bottom") +
+  scale_color_manual("", values = c("Minimal" = "seagreen",
+                                    "Moderately advanced" = "goldenrod1",
+                                    "Far advanced" = "firebrick2")) +
+  scale_fill_manual("",
+                    values = c("Minimal" = "seagreen",
+                               "Moderately advanced" = "goldenrod1",
+                               "Far advanced" = "firebrick2"))
 
+ggsave("Figures/summary_curves_sev_2.png", width = 5, height = 5)
 
 #### Individual Survival Curves ------------------------------------------------
 
